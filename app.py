@@ -66,16 +66,71 @@ def load_registry():
     return []
 
 # ---------------- STYLE HACKER -----------------
+# ---------------- STYLE ANONYMOUS -----------------
 st.markdown("""
 <style>
-body { background-color: #0f0f0f; color: #00ff00; font-family: 'Courier New', monospace; }
-h1,h2,h3,h4,h5,h6 { color: #00ffff; font-family: 'Courier New', monospace; animation: glow 1.5s infinite alternate; }
-.stButton>button { background-color: #111111; color: #00ff00; border: 1px solid #00ff00; font-weight: bold; }
-.stButton>button:hover { background-color: #00ff00; color: #0f0f0f; }
-.stProgress>div>div>div>div { background-color: #00ff00; }
-@keyframes glow {
-  0% { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ff00; }
-  100% { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ff00; }
+body {
+    background-color: #0a0a0a;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+h1,h2,h3,h4,h5,h6 {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ff00;
+    animation: flicker 1.5s infinite alternate;
+}
+.stButton>button {
+    background-color: #111111;
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.stButton>button:hover {
+    background-color: #00ff00;
+    color: #0a0a0a;
+    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff;
+}
+.stProgress>div>div>div>div {
+    background-color: #00ff00 !important;
+    border-radius: 5px;
+}
+.stFileUploader>div {
+    border: 2px dashed #00ff00;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #111111;
+    transition: all 0.3s ease;
+}
+.stFileUploader>div:hover {
+    border-color: #00ffff;
+    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ffff;
+}
+.stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input {
+    background-color: #111111;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+.stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus {
+    border-color: #00ffff;
+    outline: none;
+    box-shadow: 0 0 10px #00ffff;
+}
+.registry-entry {
+    border: 1px solid #00ff00;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+.registry-entry:hover {
+    border-color: #00ffff;
+    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff;
+}
+@keyframes flicker {
+  0% { opacity: 0.9; text-shadow: 0 0 5px #00ffff; }
+  50% { opacity: 1; text-shadow: 0 0 20px #00ff00, 0 0 30px #00ffff; }
+  100% { opacity: 0.95; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff; }
 }
 </style>
 """, unsafe_allow_html=True)
