@@ -67,8 +67,10 @@ def load_registry():
 
 # ---------------- STYLE HACKER -----------------
 # ---------------- STYLE ANONYMOUS -----------------
+# ---------------- STYLE ANONYMOUS PRO -----------------
 st.markdown("""
 <style>
+/* ---------------- BODY & FONTS ---------------- */
 body {
     background-color: #0a0a0a;
     color: #00ff00;
@@ -78,59 +80,108 @@ h1,h2,h3,h4,h5,h6 {
     color: #00ffff;
     text-shadow: 0 0 10px #00ffff, 0 0 20px #00ff00;
     animation: flicker 1.5s infinite alternate;
+    font-weight: bold;
 }
+p, li, span {
+    color: #00ff00;
+}
+
+/* ---------------- BUTTONS ---------------- */
 .stButton>button {
     background-color: #111111;
     color: #00ff00;
     border: 2px solid #00ff00;
     font-weight: bold;
+    padding: 0.5em 1em;
     transition: all 0.3s ease;
+    text-transform: uppercase;
 }
 .stButton>button:hover {
     background-color: #00ff00;
     color: #0a0a0a;
-    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff;
+    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff, 0 0 30px #00ff00 inset;
 }
-.stProgress>div>div>div>div {
-    background-color: #00ff00 !important;
-    border-radius: 5px;
-}
+
+/* ---------------- FILE UPLOADER ---------------- */
 .stFileUploader>div {
     border: 2px dashed #00ff00;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 25px;
     background-color: #111111;
     transition: all 0.3s ease;
 }
 .stFileUploader>div:hover {
     border-color: #00ffff;
-    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ffff;
+    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ffff inset;
 }
-.stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input {
+
+/* ---------------- INPUTS & TEXTAREAS ---------------- */
+.stTextInput>div>div>input,
+.stTextArea>div>div>textarea,
+.stNumberInput>div>div>input {
     background-color: #111111;
     color: #00ff00;
     border: 1px solid #00ff00;
+    border-radius: 5px;
+    padding: 5px;
 }
-.stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus {
+.stTextInput>div>div>input:focus,
+.stTextArea>div>div>textarea:focus,
+.stNumberInput>div>div>input:focus {
     border-color: #00ffff;
     outline: none;
-    box-shadow: 0 0 10px #00ffff;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ff00 inset;
 }
+
+/* ---------------- PROGRESS BAR ---------------- */
+.stProgress>div>div>div>div {
+    background-color: #00ff00 !important;
+    border-radius: 6px;
+    height: 15px;
+}
+
+/* ---------------- REGISTRY ENTRIES ---------------- */
 .registry-entry {
     border: 1px solid #00ff00;
-    padding: 10px;
+    padding: 15px;
     margin: 5px 0;
-    border-radius: 5px;
+    border-radius: 8px;
+    background-color: #111111;
     transition: all 0.3s ease;
 }
 .registry-entry:hover {
     border-color: #00ffff;
-    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff;
+    box-shadow: 0 0 15px #00ff00, 0 0 30px #00ffff inset;
 }
+
+/* ---------------- LINKS ---------------- */
+a {
+    color: #00ffff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+    color: #00ff00;
+}
+
+/* ---------------- ANIMATIONS ---------------- */
 @keyframes flicker {
   0% { opacity: 0.9; text-shadow: 0 0 5px #00ffff; }
   50% { opacity: 1; text-shadow: 0 0 20px #00ff00, 0 0 30px #00ffff; }
   100% { opacity: 0.95; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff; }
+}
+
+/* ---------------- SCROLLBAR CUSTOM ---------------- */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #111111;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #00ff00;
+    border-radius: 10px;
+    border: 2px solid #0a0a0a;
 }
 </style>
 """, unsafe_allow_html=True)
