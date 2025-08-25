@@ -20,15 +20,14 @@ def sha256_bytes(data):
     h.update(data)
     return h.hexdigest()
 
-def split_encrypt_stream(uploaded_file, filename, key, chunk_size=CHUNK_SIZE):
-    uploaded_file.seek(0)
+def split_encrypt(file_bytes, filename, key, chunk_size=CHUNK_SIZE):
+    buffer = io.BytesIO(file_bytes)
     parts = []
-    hashes = []
     i = 0
-    total_size = uploaded_file.size
+    total_size = len(file_bytes)
     read_bytes = 0
     while True:
-        chunk = uploaded_file.read(chunk_size)
+        chunk = buffer.read(chunk_size)
         if not chunk:
             break
         cipher = AES.new(key, AES.MODE_CBC)
@@ -37,9 +36,9 @@ def split_encrypt_stream(uploaded_file, filename, key, chunk_size=CHUNK_SIZE):
         parts.append((f"{filename}.part{i}", part_data, sha256_bytes(chunk)))
         i += 1
         read_bytes += len(chunk)
-        yield parts[-1], read_bytes / total_size  # renvoie le dernier chunk et la progression
+        yield parts[-1], read_bytes / total_size
 
-def merge_decrypt_stream(parts, key):
+def merge_decrypt(parts, key):
     data = b""
     for part_name, part_bytes, _ in sorted(parts, key=lambda x: x[0]):
         iv = part_bytes[:16]
@@ -63,7 +62,7 @@ h1,h2,h3,h4,h5,h6 { color: #00ffff; font-family: 'Courier New', monospace; anima
 </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ TUR-FU File Split & Secure Tool ⚡")
+st.title("⚡ TUR-FU PRO File Split & Secure Tool ⚡")
 
 # ---------------- SPLIT & ENCRYPT -----------------
 st.subheader("🔹 Split & Encrypt")
@@ -73,21 +72,22 @@ chunk_size_input = st.number_input("Chunk size in MB", value=DEFAULT_CHUNK_MB, m
 CHUNK_SIZE = int(chunk_size_input * 1024 * 1024)
 
 if uploaded_file and passphrase:
-    key = hashlib.sha256(passphrase.encode()).digest()
-    parts_all = []
-    progress_bar = st.progress(0.0)
-    zip_buffer = io.BytesIO()
-    
     try:
+        file_bytes = uploaded_file.read()  # Lecture unique et sécurisée
+        key = hashlib.sha256(passphrase.encode()).digest()
+        progress_bar = st.progress(0.0)
+        zip_buffer = io.BytesIO()
+        parts_all = []
+
         with zipfile.ZipFile(zip_buffer, "w") as zipf:
-            for (part_name, part_data, chunk_hash), progress in split_encrypt_stream(uploaded_file, uploaded_file.name, key, chunk_size=CHUNK_SIZE):
+            for (part_name, part_data, chunk_hash), progress in split_encrypt(file_bytes, uploaded_file.name, key, chunk_size=CHUNK_SIZE):
                 zipf.writestr(part_name, part_data)
                 st.write(f"{part_name} SHA256: `{chunk_hash}`")
                 progress_bar.progress(progress)
                 parts_all.append((part_name, part_data, chunk_hash))
+
         zip_buffer.seek(0)
-        uploaded_file.seek(0)
-        st.code(f"Original SHA256: {sha256_bytes(uploaded_file.read())}")
+        st.code(f"Original SHA256: {sha256_bytes(file_bytes)}")
         st.download_button("Download all parts as ZIP", zip_buffer, file_name=f"{uploaded_file.name}_parts.zip")
         st.success(f"File split into **{len(parts_all)} encrypted parts**")
     except Exception as e:
@@ -100,12 +100,11 @@ merge_output_name = st.text_input("Output filename", value="reconstructed_file.d
 passphrase_merge = st.text_input("Enter passphrase for decryption", type="password", key="merge_pass")
 
 if uploaded_parts and passphrase_merge and merge_output_name:
-    key = hashlib.sha256(passphrase_merge.encode()).digest()
-    parts_data = [(f.name, f.read(), None) for f in uploaded_parts]
-    progress_bar_merge = st.progress(0.0)
-    
     try:
-        reconstructed = merge_decrypt_stream(parts_data, key)
+        key = hashlib.sha256(passphrase_merge.encode()).digest()
+        parts_data = [(f.name, f.read(), None) for f in uploaded_parts]
+        progress_bar_merge = st.progress(0.0)
+        reconstructed = merge_decrypt(parts_data, key)
         st.download_button(f"Download merged file ({merge_output_name})", io.BytesIO(reconstructed), file_name=merge_output_name)
         st.code(f"Reconstructed SHA256: {sha256_bytes(reconstructed)}")
         progress_bar_merge.progress(1.0)
