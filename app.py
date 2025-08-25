@@ -2,7 +2,6 @@ import streamlit as st
 import io, zipfile
 from Crypto.Cipher import AES
 import hashlib
-from concurrent.futures import ThreadPoolExecutor
 
 # ---------------- CONFIG -----------------
 DEFAULT_CHUNK_MB = 10
@@ -21,26 +20,25 @@ def sha256_bytes(data):
     h.update(data)
     return h.hexdigest()
 
-# Split & encrypt par chunk avec ThreadPool
 def split_encrypt_stream(uploaded_file, filename, key, chunk_size=CHUNK_SIZE):
     uploaded_file.seek(0)
     parts = []
     hashes = []
     i = 0
+    total_size = uploaded_file.size
+    read_bytes = 0
     while True:
         chunk = uploaded_file.read(chunk_size)
         if not chunk:
             break
-        def encrypt_chunk(chunk, idx):
-            cipher = AES.new(key, AES.MODE_CBC)
-            ct_bytes = cipher.encrypt(pad(chunk))
-            part_data = cipher.iv + ct_bytes
-            return f"{filename}.part{idx}", part_data, sha256_bytes(chunk)
-        parts.append(encrypt_chunk(chunk, i))
+        cipher = AES.new(key, AES.MODE_CBC)
+        ct_bytes = cipher.encrypt(pad(chunk))
+        part_data = cipher.iv + ct_bytes
+        parts.append((f"{filename}.part{i}", part_data, sha256_bytes(chunk)))
         i += 1
-    return parts
+        read_bytes += len(chunk)
+        yield parts[-1], read_bytes / total_size  # renvoie le dernier chunk et la progression
 
-# Merge & decrypt par chunk
 def merge_decrypt_stream(parts, key):
     data = b""
     for part_name, part_bytes, _ in sorted(parts, key=lambda x: x[0]):
@@ -50,7 +48,7 @@ def merge_decrypt_stream(parts, key):
         data += unpad(cipher.decrypt(ct))
     return data
 
-# ---------------- STYLE HACKER / TUR-FU -----------------
+# ---------------- STYLE HACKER -----------------
 st.markdown("""
 <style>
 body { background-color: #0f0f0f; color: #00ff00; font-family: 'Courier New', monospace; }
@@ -76,21 +74,22 @@ CHUNK_SIZE = int(chunk_size_input * 1024 * 1024)
 
 if uploaded_file and passphrase:
     key = hashlib.sha256(passphrase.encode()).digest()
+    parts_all = []
     progress_bar = st.progress(0.0)
+    zip_buffer = io.BytesIO()
+    
     try:
-        parts = split_encrypt_stream(uploaded_file, uploaded_file.name, key, chunk_size=CHUNK_SIZE)
-        st.success(f"File split into **{len(parts)} encrypted parts**")
+        with zipfile.ZipFile(zip_buffer, "w") as zipf:
+            for (part_name, part_data, chunk_hash), progress in split_encrypt_stream(uploaded_file, uploaded_file.name, key, chunk_size=CHUNK_SIZE):
+                zipf.writestr(part_name, part_data)
+                st.write(f"{part_name} SHA256: `{chunk_hash}`")
+                progress_bar.progress(progress)
+                parts_all.append((part_name, part_data, chunk_hash))
+        zip_buffer.seek(0)
         uploaded_file.seek(0)
         st.code(f"Original SHA256: {sha256_bytes(uploaded_file.read())}")
-        
-        # ZIP tous les chunks
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "w") as zipf:
-            for idx, (part_name, part_data, hash_chunk) in enumerate(parts):
-                zipf.writestr(part_name, part_data)
-                st.write(f"{part_name} SHA256: `{hash_chunk}`")
-                progress_bar.progress((idx+1)/len(parts))
-        st.download_button("Download all parts as ZIP", zip_buffer.getvalue(), file_name=f"{uploaded_file.name}_parts.zip")
+        st.download_button("Download all parts as ZIP", zip_buffer, file_name=f"{uploaded_file.name}_parts.zip")
+        st.success(f"File split into **{len(parts_all)} encrypted parts**")
     except Exception as e:
         st.error(f"Error during split/encrypt: {e}")
 
@@ -102,13 +101,12 @@ passphrase_merge = st.text_input("Enter passphrase for decryption", type="passwo
 
 if uploaded_parts and passphrase_merge and merge_output_name:
     key = hashlib.sha256(passphrase_merge.encode()).digest()
-    parts_data = []
-    for f in uploaded_parts:
-        parts_data.append((f.name, f.read(), None))
+    parts_data = [(f.name, f.read(), None) for f in uploaded_parts]
     progress_bar_merge = st.progress(0.0)
+    
     try:
         reconstructed = merge_decrypt_stream(parts_data, key)
-        st.download_button(f"Download merged file ({merge_output_name})", reconstructed, file_name=merge_output_name)
+        st.download_button(f"Download merged file ({merge_output_name})", io.BytesIO(reconstructed), file_name=merge_output_name)
         st.code(f"Reconstructed SHA256: {sha256_bytes(reconstructed)}")
         progress_bar_merge.progress(1.0)
     except Exception as e:
