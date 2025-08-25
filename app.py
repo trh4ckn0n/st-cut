@@ -73,7 +73,7 @@ CHUNK_SIZE = int(chunk_size_input * 1024 * 1024)
 
 if uploaded_file and passphrase:
     try:
-        file_bytes = uploaded_file.read()  # Lecture unique et sécurisée
+        file_bytes = uploaded_file.read()  # Lecture unique
         key = hashlib.sha256(passphrase.encode()).digest()
         progress_bar = st.progress(0.0)
         zip_buffer = io.BytesIO()
@@ -95,18 +95,33 @@ if uploaded_file and passphrase:
 
 # ---------------- MERGE & DECRYPT -----------------
 st.subheader("🔹 Merge & Decrypt")
-uploaded_parts = st.file_uploader("Upload all parts to merge", accept_multiple_files=True, key="merge")
+uploaded_zip_or_parts = st.file_uploader(
+    "Upload all parts (or ZIP containing parts)", 
+    accept_multiple_files=False, key="merge"
+)
 merge_output_name = st.text_input("Output filename", value="reconstructed_file.dat", key="merge_name")
 passphrase_merge = st.text_input("Enter passphrase for decryption", type="password", key="merge_pass")
 
-if uploaded_parts and passphrase_merge and merge_output_name:
+if uploaded_zip_or_parts and passphrase_merge and merge_output_name:
     try:
         key = hashlib.sha256(passphrase_merge.encode()).digest()
-        parts_data = [(f.name, f.read(), None) for f in uploaded_parts]
+        uploaded_bytes = uploaded_zip_or_parts.read()
+        parts_data = []
+
+        # Détecter ZIP et extraire les parts
+        if zipfile.is_zipfile(io.BytesIO(uploaded_bytes)):
+            with zipfile.ZipFile(io.BytesIO(uploaded_bytes)) as zf:
+                for f in zf.namelist():
+                    parts_data.append((f, zf.read(f), None))
+        else:
+            # fichier unique
+            parts_data.append((uploaded_zip_or_parts.name, uploaded_bytes, None))
+
         progress_bar_merge = st.progress(0.0)
         reconstructed = merge_decrypt(parts_data, key)
         st.download_button(f"Download merged file ({merge_output_name})", io.BytesIO(reconstructed), file_name=merge_output_name)
         st.code(f"Reconstructed SHA256: {sha256_bytes(reconstructed)}")
         progress_bar_merge.progress(1.0)
+        st.success("Merge & decrypt completed successfully ✅")
     except Exception as e:
         st.error(f"Error during merge/decrypt: {e}")
