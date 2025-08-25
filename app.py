@@ -1,11 +1,12 @@
 import streamlit as st
-import io, zipfile
+import io, zipfile, json, os, datetime
 from Crypto.Cipher import AES
 import hashlib
 
 # ---------------- CONFIG -----------------
 DEFAULT_CHUNK_MB = 10
 CHUNK_SIZE = DEFAULT_CHUNK_MB * 1024 * 1024
+REGISTRY_FILE = "file_registry.json"
 
 # ---------------- UTILITAIRES -----------------
 def pad(data):
@@ -47,6 +48,23 @@ def merge_decrypt(parts, key):
         data += unpad(cipher.decrypt(ct))
     return data
 
+def save_registry(entry):
+    if os.path.exists(REGISTRY_FILE):
+        with open(REGISTRY_FILE, "r") as f:
+            registry = json.load(f)
+    else:
+        registry = []
+
+    registry.append(entry)
+    with open(REGISTRY_FILE, "w") as f:
+        json.dump(registry, f, indent=2)
+
+def load_registry():
+    if os.path.exists(REGISTRY_FILE):
+        with open(REGISTRY_FILE, "r") as f:
+            return json.load(f)
+    return []
+
 # ---------------- STYLE HACKER -----------------
 st.markdown("""
 <style>
@@ -62,12 +80,13 @@ h1,h2,h3,h4,h5,h6 { color: #00ffff; font-family: 'Courier New', monospace; anima
 </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ TUR-FU PRO File Split & Secure Tool ⚡")
+st.title("⚡ TUR-FU PRO++ File Split & Secure Tool ⚡")
 
 # ---------------- SPLIT & ENCRYPT -----------------
 st.subheader("🔹 Split & Encrypt")
 uploaded_file = st.file_uploader("Choose a file", key="split")
 passphrase = st.text_input("Enter passphrase for encryption", type="password", key="split_pass")
+description = st.text_area("Add description or notes for this file", placeholder="E.g., Project backup, confidential, etc.")
 chunk_size_input = st.number_input("Chunk size in MB", value=DEFAULT_CHUNK_MB, min_value=1, max_value=1024, key="chunk_size")
 CHUNK_SIZE = int(chunk_size_input * 1024 * 1024)
 
@@ -90,6 +109,19 @@ if uploaded_file and passphrase:
         st.code(f"Original SHA256: {sha256_bytes(file_bytes)}")
         st.download_button("Download all parts as ZIP", zip_buffer, file_name=f"{uploaded_file.name}_parts.zip")
         st.success(f"File split into **{len(parts_all)} encrypted parts**")
+
+        # Save metadata in registry
+        entry = {
+            "filename": uploaded_file.name,
+            "description": description,
+            "size_bytes": len(file_bytes),
+            "sha256": sha256_bytes(file_bytes),
+            "chunks": len(parts_all),
+            "chunk_size_bytes": CHUNK_SIZE,
+            "date": str(datetime.datetime.now())
+        }
+        save_registry(entry)
+        st.info(f"✅ File metadata saved. Total files in registry: {len(load_registry())}")
     except Exception as e:
         st.error(f"Error during split/encrypt: {e}")
 
@@ -99,10 +131,9 @@ uploaded_zip_or_parts = st.file_uploader(
     "Upload all parts (or ZIP containing parts)", 
     accept_multiple_files=False, key="merge"
 )
-merge_output_name = st.text_input("Output filename", value="reconstructed_file.dat", key="merge_name")
 passphrase_merge = st.text_input("Enter passphrase for decryption", type="password", key="merge_pass")
 
-if uploaded_zip_or_parts and passphrase_merge and merge_output_name:
+if uploaded_zip_or_parts and passphrase_merge:
     try:
         key = hashlib.sha256(passphrase_merge.encode()).digest()
         uploaded_bytes = uploaded_zip_or_parts.read()
@@ -113,9 +144,15 @@ if uploaded_zip_or_parts and passphrase_merge and merge_output_name:
             with zipfile.ZipFile(io.BytesIO(uploaded_bytes)) as zf:
                 for f in zf.namelist():
                     parts_data.append((f, zf.read(f), None))
+            # Récupérer l'extension originale si nom .partX
+            base_name = parts_data[0][0].rsplit(".part", 1)[0]
+            ext = "." + base_name.split(".")[-1] if "." in base_name else ""
         else:
-            # fichier unique
             parts_data.append((uploaded_zip_or_parts.name, uploaded_bytes, None))
+            base_name = uploaded_zip_or_parts.name
+            ext = "." + base_name.split(".")[-1] if "." in base_name else ""
+
+        merge_output_name = st.text_input("Output filename", value=f"{base_name}_reconstructed{ext}", key="merge_name")
 
         progress_bar_merge = st.progress(0.0)
         reconstructed = merge_decrypt(parts_data, key)
@@ -125,3 +162,17 @@ if uploaded_zip_or_parts and passphrase_merge and merge_output_name:
         st.success("Merge & decrypt completed successfully ✅")
     except Exception as e:
         st.error(f"Error during merge/decrypt: {e}")
+
+# ---------------- REGISTRY VIEW -----------------
+st.subheader("🗂 File Registry")
+registry = load_registry()
+if registry:
+    for idx, entry in enumerate(registry):
+        st.markdown(f"**{idx+1}. {entry['filename']}** ({entry['chunks']} chunks, {entry['size_bytes']} bytes)")
+        st.markdown(f"_SHA256_: `{entry['sha256']}`")
+        st.markdown(f"_Description_: {entry['description']}")
+        st.markdown(f"_Chunk size_: {entry['chunk_size_bytes']} bytes")
+        st.markdown(f"_Date_: {entry['date']}")
+        st.markdown("---")
+else:
+    st.info("No files in registry yet.")
