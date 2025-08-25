@@ -65,30 +65,114 @@ def load_registry():
             return json.load(f)
     return []
 
-# ---------------- STYLE ANONYMOUS DARK -----------------
 st.markdown("""
 <style>
 body { background-color:#050505; color:#00ff00; font-family:'Courier New', monospace; }
-h1,h2,h3 { color:#fff000; text-shadow:0 0 10px #ffff00,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
-h4,h5,h6 { color:#00ffff; text-shadow:0 0 10px #ff0000,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
-p  { color:#00ffff; text-shadow:0 0 10px #ff0000,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
-li, span { color:#00ff00; }
-.stButton>button { background-color:#111111; color:#00ff00; border:2px solid #00ff00; font-weight:bold; padding:0.5em 1em; text-transform:uppercase; transition:0.3s; }
-.stButton>button:hover { background-color:#00ff00; color:#050505; box-shadow:0 0 10px #00ff00,0 0 20px #00ffff,0 0 30px #00ff00 inset; }
-.stFileUploader>div { border:2px dashed #00ff00; border-radius:12px; padding:25px; background-color:#111111; transition:0.3s; }
-.stFileUploader>div:hover { border-color:#00ffff; box-shadow:0 0 15px #00ff00,0 0 25px #00ffff inset; }
-.stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input { background-color:#111111; color:#00ff00; border:1px solid #00ff00; border-radius:5px; padding:5px; }
-.stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus { border-color:#ff0000; outline:none; box-shadow:0 0 10px #ff0000,0 0 20px #00ff00 inset; }
-.stProgress>div>div>div>div { background-color:#00ff00 !important; border-radius:6px; height:15px; }
-.registry-entry { border:1px solid #00ff00; padding:15px; margin:5px 0; border-radius:8px; background-color:#111111; transition:0.3s; animation: entry-glitch 2s infinite alternate; }
-.registry-entry:hover { border-color:#ff0000; box-shadow:0 0 15px #00ff00,0 0 30px #ff0000 inset; }
+
+h1,h2,h3 {
+    color:#ffd700; 
+    text-shadow:0 0 10px #ffff66,0 0 20px #00ff99; 
+    animation:flicker 1.5s infinite alternate; 
+    font-weight:bold;
+}
+
+h4,h5,h6 {
+    color:#00ffff; 
+    text-shadow:0 0 10px #00ccff,0 0 20px #66ff66; 
+    animation:flicker 1.5s infinite alternate; 
+    font-weight:bold;
+}
+
+p {
+    color:#ff66cc; 
+    text-shadow:0 0 8px #ff99cc,0 0 16px #00ff66; 
+    animation:flicker 1.5s infinite alternate;
+}
+
+li, span { color:#00ffcc; }
+
+.stButton>button {
+    background-color:#111111; 
+    color:#00ffcc; 
+    border:2px solid #00ffcc; 
+    font-weight:bold; 
+    padding:0.5em 1em; 
+    text-transform:uppercase; 
+    transition:0.3s;
+}
+
+.stButton>button:hover {
+    background-color:#00ffcc; 
+    color:#050505; 
+    box-shadow:0 0 10px #00ffcc,0 0 20px #00ffff,0 0 30px #66ff66 inset;
+}
+
+.stFileUploader>div {
+    border:2px dashed #00ffcc; 
+    border-radius:12px; 
+    padding:25px; 
+    background-color:#111111; 
+    transition:0.3s;
+}
+
+.stFileUploader>div:hover {
+    border-color:#00ffff; 
+    box-shadow:0 0 15px #00ffcc,0 0 25px #00ffff inset;
+}
+
+.stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input {
+    background-color:#111111; 
+    color:#00ffcc; 
+    border:1px solid #00ffcc; 
+    border-radius:5px; 
+    padding:5px;
+}
+
+.stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus {
+    border-color:#ff66cc; 
+    outline:none; 
+    box-shadow:0 0 10px #ff66cc,0 0 20px #00ffcc inset;
+}
+
+.stProgress>div>div>div>div {
+    background-color:#00ffcc !important; 
+    border-radius:6px; 
+    height:15px;
+}
+
+.registry-entry {
+    border:1px solid #00ffcc; 
+    padding:15px; 
+    margin:5px 0; 
+    border-radius:8px; 
+    background-color:#111111; 
+    transition:0.3s; 
+    animation: entry-glitch 2s infinite alternate;
+}
+
+.registry-entry:hover {
+    border-color:#ff66cc; 
+    box-shadow:0 0 15px #00ffcc,0 0 30px #ff66cc inset;
+}
+
 a { color:#00ffff; text-decoration:none; }
-a:hover { text-decoration:underline; color:#00ff00; }
-@keyframes flicker { 0% {opacity:0.9; text-shadow:0 0 5px #00ffff;} 50% {opacity:1; text-shadow:0 0 20px #00ff00,0 0 30px #ff0000;} 100% {opacity:0.95; text-shadow:0 0 10px #00ff00,0 0 20px #ff0000;} }
-@keyframes entry-glitch { 0% { box-shadow:0 0 10px #00ff00,0 0 20px #ff0000; } 50% { box-shadow:0 0 15px #00ff00,0 0 25px #ff0000 inset; } 100% { box-shadow:0 0 12px #00ff00,0 0 22px #ff0000; } }
+a:hover { text-decoration:underline; color:#00ffcc; }
+
+@keyframes flicker { 
+    0% {opacity:0.9; text-shadow:0 0 5px #00ffff;}  
+    50% {opacity:1; text-shadow:0 0 20px #00ffcc,0 0 30px #ff66cc;}  
+    100% {opacity:0.95; text-shadow:0 0 10px #00ffcc,0 0 20px #ff66cc;} 
+}
+
+@keyframes entry-glitch { 
+    0% { box-shadow:0 0 10px #00ffcc,0 0 20px #ff66cc; }  
+    50% { box-shadow:0 0 15px #00ffcc,0 0 25px #ff66cc inset; }  
+    100% { box-shadow:0 0 12px #00ffcc,0 0 22px #ff66cc; } 
+}
+
 ::-webkit-scrollbar { width:10px; }
 ::-webkit-scrollbar-track { background:#111111; }
-::-webkit-scrollbar-thumb { background-color:#00ff00; border-radius:10px; border:2px solid #050505; }
+::-webkit-scrollbar-thumb { background-color:#00ffcc; border-radius:10px; border:2px solid #050505; }
 </style>
 """, unsafe_allow_html=True)
 
