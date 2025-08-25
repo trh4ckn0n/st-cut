@@ -65,128 +65,34 @@ def load_registry():
             return json.load(f)
     return []
 
-# ---------------- STYLE HACKER -----------------
-# ---------------- STYLE ANONYMOUS -----------------
-# ---------------- STYLE ANONYMOUS PRO -----------------
+# ---------------- STYLE ANONYMOUS DARK -----------------
 st.markdown("""
 <style>
-/* ---------------- BODY & FONTS ---------------- */
-body {
-    background-color: #0a0a0a;
-    color: #00ff00;
-    font-family: 'Courier New', monospace;
-}
-h1,h2,h3,h4,h5,h6 {
-    color: #00ffff;
-    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ff00;
-    animation: flicker 1.5s infinite alternate;
-    font-weight: bold;
-}
-p, li, span {
-    color: #00ff00;
-}
-
-/* ---------------- BUTTONS ---------------- */
-.stButton>button {
-    background-color: #111111;
-    color: #00ff00;
-    border: 2px solid #00ff00;
-    font-weight: bold;
-    padding: 0.5em 1em;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-}
-.stButton>button:hover {
-    background-color: #00ff00;
-    color: #0a0a0a;
-    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff, 0 0 30px #00ff00 inset;
-}
-
-/* ---------------- FILE UPLOADER ---------------- */
-.stFileUploader>div {
-    border: 2px dashed #00ff00;
-    border-radius: 12px;
-    padding: 25px;
-    background-color: #111111;
-    transition: all 0.3s ease;
-}
-.stFileUploader>div:hover {
-    border-color: #00ffff;
-    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ffff inset;
-}
-
-/* ---------------- INPUTS & TEXTAREAS ---------------- */
-.stTextInput>div>div>input,
-.stTextArea>div>div>textarea,
-.stNumberInput>div>div>input {
-    background-color: #111111;
-    color: #00ff00;
-    border: 1px solid #00ff00;
-    border-radius: 5px;
-    padding: 5px;
-}
-.stTextInput>div>div>input:focus,
-.stTextArea>div>div>textarea:focus,
-.stNumberInput>div>div>input:focus {
-    border-color: #00ffff;
-    outline: none;
-    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ff00 inset;
-}
-
-/* ---------------- PROGRESS BAR ---------------- */
-.stProgress>div>div>div>div {
-    background-color: #00ff00 !important;
-    border-radius: 6px;
-    height: 15px;
-}
-
-/* ---------------- REGISTRY ENTRIES ---------------- */
-.registry-entry {
-    border: 1px solid #00ff00;
-    padding: 15px;
-    margin: 5px 0;
-    border-radius: 8px;
-    background-color: #111111;
-    transition: all 0.3s ease;
-}
-.registry-entry:hover {
-    border-color: #00ffff;
-    box-shadow: 0 0 15px #00ff00, 0 0 30px #00ffff inset;
-}
-
-/* ---------------- LINKS ---------------- */
-a {
-    color: #00ffff;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-    color: #00ff00;
-}
-
-/* ---------------- ANIMATIONS ---------------- */
-@keyframes flicker {
-  0% { opacity: 0.9; text-shadow: 0 0 5px #00ffff; }
-  50% { opacity: 1; text-shadow: 0 0 20px #00ff00, 0 0 30px #00ffff; }
-  100% { opacity: 0.95; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ffff; }
-}
-
-/* ---------------- SCROLLBAR CUSTOM ---------------- */
-::-webkit-scrollbar {
-    width: 10px;
-}
-::-webkit-scrollbar-track {
-    background: #111111;
-}
-::-webkit-scrollbar-thumb {
-    background-color: #00ff00;
-    border-radius: 10px;
-    border: 2px solid #0a0a0a;
-}
+body { background-color:#050505; color:#00ff00; font-family:'Courier New', monospace; }
+h1,h2,h3,h4,h5,h6 { color:#00ffff; text-shadow:0 0 10px #00ffff,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
+p, li, span { color:#00ff00; }
+.stButton>button { background-color:#111111; color:#00ff00; border:2px solid #00ff00; font-weight:bold; padding:0.5em 1em; text-transform:uppercase; transition:0.3s; }
+.stButton>button:hover { background-color:#00ff00; color:#050505; box-shadow:0 0 10px #00ff00,0 0 20px #00ffff,0 0 30px #00ff00 inset; }
+.stFileUploader>div { border:2px dashed #00ff00; border-radius:12px; padding:25px; background-color:#111111; transition:0.3s; }
+.stFileUploader>div:hover { border-color:#00ffff; box-shadow:0 0 15px #00ff00,0 0 25px #00ffff inset; }
+.stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input { background-color:#111111; color:#00ff00; border:1px solid #00ff00; border-radius:5px; padding:5px; }
+.stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus { border-color:#00ffff; outline:none; box-shadow:0 0 10px #00ffff,0 0 20px #00ff00 inset; }
+.stProgress>div>div>div>div { background-color:#00ff00 !important; border-radius:6px; height:15px; }
+.registry-entry { border:1px solid #00ff00; padding:15px; margin:5px 0; border-radius:8px; background-color:#111111; transition:0.3s; animation: entry-glitch 2s infinite alternate; }
+.registry-entry:hover { border-color:#00ffff; box-shadow:0 0 15px #00ff00,0 0 30px #00ffff inset; }
+a { color:#00ffff; text-decoration:none; }
+a:hover { text-decoration:underline; color:#00ff00; }
+@keyframes flicker { 0% {opacity:0.9; text-shadow:0 0 5px #00ffff;} 50% {opacity:1; text-shadow:0 0 20px #00ff00,0 0 30px #00ffff;} 100% {opacity:0.95; text-shadow:0 0 10px #00ff00,0 0 20px #00ffff;} }
+@keyframes entry-glitch { 0% { box-shadow:0 0 10px #00ff00,0 0 20px #00ffff; } 50% { box-shadow:0 0 15px #00ff00,0 0 25px #00ffff inset; } 100% { box-shadow:0 0 12px #00ff00,0 0 22px #00ffff; } }
+::-webkit-scrollbar { width:10px; }
+::-webkit-scrollbar-track { background:#111111; }
+::-webkit-scrollbar-thumb { background-color:#00ff00; border-radius:10px; border:2px solid #050505; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ TUR-FU PRO++ File Split & Secure Tool ⚡")
+# ---------------- HEADER -----------------
+st.title("⚡ TUR-FU PRO++ - trhacknon ⚡")
+st.markdown("#### File Split & Secure Tool | Anonymous / Dark Mode")
 
 # ---------------- SPLIT & ENCRYPT -----------------
 st.subheader("🔹 Split & Encrypt")
@@ -198,7 +104,7 @@ CHUNK_SIZE = int(chunk_size_input * 1024 * 1024)
 
 if uploaded_file and passphrase:
     try:
-        file_bytes = uploaded_file.read()  # Lecture unique
+        file_bytes = uploaded_file.read()
         key = hashlib.sha256(passphrase.encode()).digest()
         progress_bar = st.progress(0.0)
         zip_buffer = io.BytesIO()
@@ -207,7 +113,7 @@ if uploaded_file and passphrase:
         with zipfile.ZipFile(zip_buffer, "w") as zipf:
             for (part_name, part_data, chunk_hash), progress in split_encrypt(file_bytes, uploaded_file.name, key, chunk_size=CHUNK_SIZE):
                 zipf.writestr(part_name, part_data)
-                st.write(f"{part_name} SHA256: `{chunk_hash}`")
+                st.markdown(f"<span style='color:#00ffff'>[trhacknon]> Chunk {part_name} processed | SHA256: {chunk_hash}</span>", unsafe_allow_html=True)
                 progress_bar.progress(progress)
                 parts_all.append((part_name, part_data, chunk_hash))
 
@@ -216,7 +122,6 @@ if uploaded_file and passphrase:
         st.download_button("Download all parts as ZIP", zip_buffer, file_name=f"{uploaded_file.name}_parts.zip")
         st.success(f"File split into **{len(parts_all)} encrypted parts**")
 
-        # Save metadata in registry
         entry = {
             "filename": uploaded_file.name,
             "description": description,
@@ -232,11 +137,9 @@ if uploaded_file and passphrase:
         st.error(f"Error during split/encrypt: {e}")
 
 # ---------------- MERGE & DECRYPT -----------------
+# ---------------- MERGE & DECRYPT (suite complète) -----------------
 st.subheader("🔹 Merge & Decrypt")
-uploaded_zip_or_parts = st.file_uploader(
-    "Upload all parts (or ZIP containing parts)", 
-    accept_multiple_files=False, key="merge"
-)
+uploaded_zip_or_parts = st.file_uploader("Upload all parts (or ZIP containing parts)", accept_multiple_files=False, key="merge")
 passphrase_merge = st.text_input("Enter passphrase for decryption", type="password", key="merge_pass")
 
 if uploaded_zip_or_parts and passphrase_merge:
@@ -245,12 +148,10 @@ if uploaded_zip_or_parts and passphrase_merge:
         uploaded_bytes = uploaded_zip_or_parts.read()
         parts_data = []
 
-        # Détecter ZIP et extraire les parts
         if zipfile.is_zipfile(io.BytesIO(uploaded_bytes)):
             with zipfile.ZipFile(io.BytesIO(uploaded_bytes)) as zf:
                 for f in zf.namelist():
                     parts_data.append((f, zf.read(f), None))
-            # Récupérer l'extension originale si nom .partX
             base_name = parts_data[0][0].rsplit(".part", 1)[0]
             ext = "." + base_name.split(".")[-1] if "." in base_name else ""
         else:
@@ -259,8 +160,8 @@ if uploaded_zip_or_parts and passphrase_merge:
             ext = "." + base_name.split(".")[-1] if "." in base_name else ""
 
         merge_output_name = st.text_input("Output filename", value=f"{base_name}_reconstructed{ext}", key="merge_name")
-
         progress_bar_merge = st.progress(0.0)
+
         reconstructed = merge_decrypt(parts_data, key)
         st.download_button(f"Download merged file ({merge_output_name})", io.BytesIO(reconstructed), file_name=merge_output_name)
         st.code(f"Reconstructed SHA256: {sha256_bytes(reconstructed)}")
@@ -270,15 +171,16 @@ if uploaded_zip_or_parts and passphrase_merge:
         st.error(f"Error during merge/decrypt: {e}")
 
 # ---------------- REGISTRY VIEW -----------------
-st.subheader("🗂 File Registry")
+st.subheader("🗂 File Registry (trhacknon)")
 registry = load_registry()
 if registry:
     for idx, entry in enumerate(registry):
+        st.markdown(f"<div class='registry-entry'>", unsafe_allow_html=True)
         st.markdown(f"**{idx+1}. {entry['filename']}** ({entry['chunks']} chunks, {entry['size_bytes']} bytes)")
         st.markdown(f"_SHA256_: `{entry['sha256']}`")
         st.markdown(f"_Description_: {entry['description']}")
         st.markdown(f"_Chunk size_: {entry['chunk_size_bytes']} bytes")
         st.markdown(f"_Date_: {entry['date']}")
-        st.markdown("---")
+        st.markdown("</div>", unsafe_allow_html=True)
 else:
     st.info("No files in registry yet.")
