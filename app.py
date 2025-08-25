@@ -69,8 +69,10 @@ def load_registry():
 st.markdown("""
 <style>
 body { background-color:#050505; color:#00ff00; font-family:'Courier New', monospace; }
-h1,h2,h3,h4,h5,h6 { color:#00ffff; text-shadow:0 0 10px #ff0000,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
-p, li, span { color:#00ff00; }
+h1,h2,h3 { color:#fff000; text-shadow:0 0 10px #ffff00,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
+h4,h5,h6 { color:#00ffff; text-shadow:0 0 10px #ff0000,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
+p  { color:#00ffff; text-shadow:0 0 10px #ff0000,0 0 20px #00ff00; animation:flicker 1.5s infinite alternate; font-weight:bold; }
+li, span { color:#00ff00; }
 .stButton>button { background-color:#111111; color:#00ff00; border:2px solid #00ff00; font-weight:bold; padding:0.5em 1em; text-transform:uppercase; transition:0.3s; }
 .stButton>button:hover { background-color:#00ff00; color:#050505; box-shadow:0 0 10px #00ff00,0 0 20px #00ffff,0 0 30px #00ff00 inset; }
 .stFileUploader>div { border:2px dashed #00ff00; border-radius:12px; padding:25px; background-color:#111111; transition:0.3s; }
